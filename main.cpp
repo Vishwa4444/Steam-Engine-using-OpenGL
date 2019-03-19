@@ -578,7 +578,7 @@ myReshape(int w, int h)
 int
 main(int argc, char **argv)
 {
-  puts("Miniature Steam Engine                    Troy Robinette\n");
+  puts("Miniature Steam Engine\n");
 
   puts("Keypad Arrow keys (with NUM_LOCK on) rotates object.");
   puts("Rotate crank: 'a' = anti-clock wise 'z' = clock wise");
