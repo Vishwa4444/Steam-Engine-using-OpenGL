@@ -1,5 +1,6 @@
-
-
+#include<iostream>
+#include<fstream>
+#include<stdlib.h>
 #include <stdio.h>
 #include <GL/glut.h>
 #include <math.h>
@@ -84,7 +85,7 @@ void
 draw_piston(void)
 {
   glPushMatrix();
-    glColor4f(0.3, 0.6, 0.9, 1.0);
+    glColor4f(0.9, 0.6, 0.9, 1.5);
 
     glPushMatrix();
       glRotatef(90, 0.0, 1.0, 0.0);
@@ -108,7 +109,7 @@ draw_engine_pole(void)
     glColor4f(0.9, 0.9, 0.9, 1.0);
     myBox(0.5, 3.0, 0.5);
 
-    glColor3f(0.5, 0.1, 0.5);
+    glColor3f(1.5, 2.1, 3.5);
     glRotatef(90, 0.0, 1.0, 0.0);
     glTranslatef(0.0, 0.9, -0.4);
     myCylinder(obj, 0.1, 0.0, 2);
@@ -121,7 +122,7 @@ void
 draw_cylinder_head(void)
 {
   glPushMatrix();
-    glColor4f(0.5, 1.0, 0.5, 0.1);
+    glColor4f(3.5, 1.0, 0.5, 0.1);
     glRotatef(90, 1.0, 0.0, 0.0);
     glTranslatef(0, 0.0, 0.4);
     glRotatef(head_angle, 1, 0, 0);
@@ -150,7 +151,7 @@ void
 draw_crankbell(void)
 {
   glPushMatrix();
-    glColor4f(1.0, 0.5, 0.5, 1.0);
+    glColor4f(1.0, 2.5, 3.5, 1.0);
     glRotatef(90, 0.0, 1.0, 0.0);
     myCylinder(obj, 0.3, 0.08, 0.12);
 
@@ -346,10 +347,7 @@ keyboard(unsigned char key, int x, int y)
     if ((view_h -= ANGLE_STEP) <= 0)
       view_h = 360;
     break;
-  case '6':
-    if ((view_h += ANGLE_STEP) >= 360)
-      view_h = 0;
-    break;
+
   case '8':
     if ((view_v += ANGLE_STEP) >= 360)
       view_v = 0;
@@ -431,9 +429,7 @@ menu(int val)
   case 5:
     key = '0';
     break;
-  case 6:
-    key = '1';
-    break;
+
   case 7:
     key = '+';
     break;
@@ -457,8 +453,8 @@ create_menu(void)
   glutAddMenuEntry("Animation", 2);
   glutAddMenuEntry("Texture", 3);
   glutAddMenuEntry("Transparency", 4);
-  glutAddMenuEntry("Right Light (0)", 5);
-  glutAddMenuEntry("Left Light (1)", 6);
+  glutAddMenuEntry("Light On/Off", 5);
+
   glutAddMenuEntry("Speed UP", 7);
   glutAddMenuEntry("Slow Down", 8);
 }
@@ -572,13 +568,73 @@ myReshape(int w, int h)
   glScalef(1.5, 1.5, 1.5);
 }
 
+void DrawText(const char *text, int length, int x, int y)
+{
+    glMatrixMode(GL_PROJECTION);
+    double *matrix = new double[16];
+    glGetDoublev(GL_PROJECTION_MATRIX,matrix);
+    glLoadIdentity();
+    glOrtho(0,800,0,600,-5,5);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glPushMatrix();
+    glLoadIdentity();
+    glRasterPos2i(x,y);
+    for(int i = 0;i<length;i++)
+    {
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15,(int)text[i]);
+    }
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(matrix);
+    glMatrixMode(GL_MODELVIEW);
+
+}
+void display_other()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gluLookAt(0,0,-10,0,0,3,0,1,0);
+
+    std::string text1;
+    std::string text2;
+    std::string text3;
+    std::string text4;
+    std::string text5;
+    std::string text6;
+    std::string text7;
+    std::string text8;
+    std::string text9;
+    text1 = "Miniature Reciprocating Steam Engine by Sneha Sarkar 1PE16CS156";
+    text2 = "Keypad Arrow keys rotates object.";
+      text3 ="Rotate crank: 'a' = anti-clock wise 'z' = clock wise";
+      text4 ="Crank Speed : '+' = Speed up by 1   '-' = Slow Down by 1";
+      text5 = "Toggle      : 's' = Shading         't' = Texture";
+      text6 = "            : ' ' = Animation       'o' = Transparency";
+      text7 = "            : '0' = Light On/Off";
+      text8 = " Alternatively a pop up menu with all toggles is attached";
+      text9 = " to the left mouse button.";
+    DrawText(text1.data(),text1.size(),200,500);
+    DrawText(text2.data(),text2.size(),200,460);
+    DrawText(text3.data(),text3.size(),200,420);
+    DrawText(text4.data(),text4.size(),200,380);
+    DrawText(text5.data(),text5.size(),200,340);
+    DrawText(text6.data(),text6.size(),200,310);
+    DrawText(text7.data(),text7.size(),200,270);
+    DrawText(text8.data(),text8.size(),200,230);
+    DrawText(text9.data(),text9.size(),200,190);
+
+}
+
+
+
 /* Main program. An interactive model of a miniture steam engine.
    Sets system in Double Buffered mode and initialises all the call-back
    functions. */
 int
 main(int argc, char **argv)
 {
-  puts("Miniature Steam Engine\n");
+    /*
+  puts("Miniature Reciprocating Steam Engine\n");
 
   puts("Keypad Arrow keys (with NUM_LOCK on) rotates object.");
   puts("Rotate crank: 'a' = anti-clock wise 'z' = clock wise");
@@ -588,9 +644,19 @@ main(int argc, char **argv)
   puts("            : '0' = Right Light     '1' = Left Light");
   puts(" Alternatively a pop up menu with all toggles is attached");
   puts("   to the left mouse button.\n");
+  */
 
-  glutInitWindowSize(400, 400);
-  glutInit(&argc, argv);
+   glutInit(&argc, argv);
+
+  glutInitWindowSize(800, 800);
+   glutCreateWindow("Instructions");
+  glutDisplayFunc(display_other);
+
+
+  glutInitWindowSize(800, 800);
+
+
+
 
   /* Transperancy won't work properly without GLUT_ALPHA */
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
@@ -602,6 +668,7 @@ main(int argc, char **argv)
   create_menu();
 
   myinit();
+
 
   glutReshapeFunc(myReshape);
   glutMainLoop();
